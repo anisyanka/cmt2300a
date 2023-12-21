@@ -1,5 +1,5 @@
-C_SOURCES = cmt2300.c
-C_INCLUDE_FILES = cmt2300.h
+C_SOURCES = cmt2300a.c
+C_INCLUDE_FILES = -I./
 
 PREFIX = arm-none-eabi-
 # The gcc compiler bin path can be either defined in make command via GCC_PATH variable (> make GCC_PATH=xxx)
@@ -15,8 +15,8 @@ C_DEFS =
 
 CFLAGS = -mcpu=cortex-m3 -mthumb $(C_DEFS) -Wall 
 
-all: $(C_INCLUDE_FILES)
-	$(CC) $(CFLAGS) -c $(C_SOURCES)
+all:
+	$(CC) $(C_INCLUDE_FILES) $(CFLAGS) -c $(C_SOURCES)
 
 clean:
 	rm -rf *.o

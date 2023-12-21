@@ -428,14 +428,19 @@
 /* ********** CMT2300A_CUS_MODE_CTL registers ********** */
 #define CMT2300A_MASK_CHIP_MODE_SWT      0xFF
 /* CMT2300A_MASK_CHIP_MODE_SWT options */
-#define CMT2300A_GO_EEPROM               0x01
-#define CMT2300A_GO_STBY                 0x02
-#define CMT2300A_GO_RFS                  0x04
-#define CMT2300A_GO_RX                   0x08
-#define CMT2300A_GO_SLEEP                0x10
-#define CMT2300A_GO_TFS                  0x20
-#define CMT2300A_GO_TX                   0x40
-#define CMT2300A_GO_SWITCH               0x80
+
+/*
+ * See these defines in the cmt2300a.h file.
+ * Enum 'cmt2300a_go_state_t'.
+ */
+// #define CMT2300A_GO_EEPROM               0x01
+// #define CMT2300A_GO_STBY                 0x02
+// #define CMT2300A_GO_RFS                  0x04
+// #define CMT2300A_GO_RX                   0x08
+// #define CMT2300A_GO_SLEEP                0x10
+// #define CMT2300A_GO_TFS                  0x20
+// #define CMT2300A_GO_TX                   0x40
+// #define CMT2300A_GO_SWITCH               0x80
 
 /* ********** CMT2300A_CUS_MODE_STA registers ********** */
 #define CMT2300A_MASK_RSTN_IN_EN         0x20

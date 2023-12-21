@@ -31,49 +31,55 @@ def cmt2300a_convert_hex(strSrcFile, strDstFile, strSubfix):
 	output.write('#define __CMT2300A_PARAMS' +strSubfix.upper()+ '_H\r\n')
 	output.write('\r\n')
 	
+	output.write('#include <stdint.h>')
+	output.write('\r\n')
+	output.write('#include "cmt2300a_defs.h"')
+	output.write('\r\n')
+	output.write('\r\n')
+
 	output.write('/* [CMT Bank] */\r\n')
-	output.write('const u8 g_cmt2300aCmtBank' +strSubfix+ '[CMT2300A_CMT_BANK_SIZE] = {\r\n')
+	output.write('const uint8_t g_cmt2300aCmtBank' +strSubfix+ '[CMT2300A_CMT_BANK_SIZE] = {\r\n')
 	for i in range(0x00, 0x0C):
 		str = "    0x%02X," %(arr8[i])
 		output.write(str +'\r\n')
 	output.write('};\r\n\r\n')
 	
 	output.write('/* [System Bank] */\r\n')
-	output.write('const u8 g_cmt2300aSystemBank' +strSubfix+ '[CMT2300A_SYSTEM_BANK_SIZE] = {\r\n')
+	output.write('const uint8_t g_cmt2300aSystemBank' +strSubfix+ '[CMT2300A_SYSTEM_BANK_SIZE] = {\r\n')
 	for i in range(0x0C, 0x18):
 		str = "    0x%02X," %(arr8[i])
 		output.write(str +'\r\n')
 	output.write('};\r\n\r\n')
 	
 	output.write('/* [Frequency Bank] */\r\n')
-	output.write('const u8 g_cmt2300aFrequencyBank' +strSubfix+ '[CMT2300A_FREQUENCY_BANK_SIZE] = {\r\n')
+	output.write('const uint8_t g_cmt2300aFrequencyBank' +strSubfix+ '[CMT2300A_FREQUENCY_BANK_SIZE] = {\r\n')
 	for i in range(0x18, 0x20):
 		str = "    0x%02X," %(arr8[i])
 		output.write(str +'\r\n')
 	output.write('};\r\n\r\n')
 	
 	output.write('/* [Data Rate Bank] */\r\n')
-	output.write('const u8 g_cmt2300aDataRateBank' +strSubfix+ '[CMT2300A_DATA_RATE_BANK_SIZE] = {\r\n')
+	output.write('const uint8_t g_cmt2300aDataRateBank' +strSubfix+ '[CMT2300A_DATA_RATE_BANK_SIZE] = {\r\n')
 	for i in range(0x20, 0x38):
 		str = "    0x%02X," %(arr8[i])
 		output.write(str +'\r\n')
 	output.write('};\r\n\r\n')
 	
 	output.write('/* [Baseband Bank] */\r\n')
-	output.write('const u8 g_cmt2300aBasebandBank' +strSubfix+ '[CMT2300A_BASEBAND_BANK_SIZE] = {\r\n')
+	output.write('const uint8_t g_cmt2300aBasebandBank' +strSubfix+ '[CMT2300A_BASEBAND_BANK_SIZE] = {\r\n')
 	for i in range(0x38, 0x55):
 		str = "    0x%02X," %(arr8[i])
 		output.write(str +'\r\n')
 	output.write('};\r\n\r\n')
 	
 	output.write('/* [Tx Bank] */\r\n')
-	output.write('const u8 g_cmt2300aTxBank' +strSubfix+ '[CMT2300A_TX_BANK_SIZE] = {\r\n')
+	output.write('const uint8_t g_cmt2300aTxBank' +strSubfix+ '[CMT2300A_TX_BANK_SIZE] = {\r\n')
 	for i in range(0x55, 0x60):
 		str = "    0x%02X," %(arr8[i])
 		output.write(str +'\r\n')
 	output.write('};\r\n\r\n')
 	
-	output.write('#endif\r\n')
+	output.write('#endif /* __CMT2300A_PARAMS_H */\r\n')
 	
 	output.close()
 	
