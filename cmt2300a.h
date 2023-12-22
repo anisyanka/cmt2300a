@@ -73,9 +73,12 @@ typedef struct {
  * Default init IS:
  * - CFG_RETAIN enabled (settings not erased after soft reset)
  * - RSTN_IN_EN disabled
- * - LFOSC disabled
+ * - LFOSC disabled, LFOSC disabled (to gpio3). Defult 25kHz, if you'll call 'cmt2300a_set_lfosc_output(dev, 1);'
  * - SLEEP timer disabled
  * - All IRQ flags cleared
+ * - 32-byte FIFO for Tx and another 32-byte FIFO for Rx (It's a default work).
+ *   Other words: your tx-buf-max-size = your rx-buf-max-size = 32 bytes
+ * - Also this function checks the chip exists by reading special values from special registers.
  * 
  * Returns CMT2300A_SUCCESS in case of success.
  */
@@ -83,6 +86,9 @@ int cmt2300a_init(cmt2300a_dev_t *dev, int mode);
 
 /* Returns CMT2300A_SUCCESS only in case if chip state is CTM2300A_STATE_SLEEP after soft reset command */
 int cmt2300a_soft_reset(cmt2300a_dev_t *dev);
+
+/* Returns CMT2300A_SUCCESS if yes */
+int cmt2300a_is_chip_exist(cmt2300a_dev_t *dev);
 
 /*
  * Change chip work state.
@@ -100,11 +106,8 @@ int cmt2300a_go_state(cmt2300a_dev_t *dev, int go_state_mask, int desired_chip_s
  */
 uint8_t cmt2300a_get_state(cmt2300a_dev_t *dev);
 
-/* Low frequency osc state */
-void cmt2300a_set_lfosc(cmt2300a_dev_t *dev, bool enabled);
-
-/* LFOSC output via GPIO3 */
-void cmt2300a_set_lfosc_output(cmt2300a_dev_t *dev, bool enabled);
+void cmt2300a_set_lfosc(cmt2300a_dev_t *dev, bool enabled); /* Low frequency osc state */
+void cmt2300a_set_lfosc_output(cmt2300a_dev_t *dev, bool enabled); /* LFOSC output via GPIO3 */
 
 /* Clears all rised IRQ inside chip and returns IRQ masks have been rised */
 uint8_t cmt2300a_clear_irq_flags(cmt2300a_dev_t *dev);

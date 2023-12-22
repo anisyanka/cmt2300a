@@ -57,6 +57,7 @@ int cmt2300a_init(cmt2300a_dev_t *dev, int mode)
 
     /* 4. Diable LFOSC (used for sleep timer) */
     cmt2300a_set_lfosc(dev, false);
+    cmt2300a_set_lfosc_output(dev, false);
 
     /* 5, 6. Disable RSTN_IN, Enable CFG_RETAIN */
     uint8_t tmp = read_reg(dev, CMT2300A_CUS_MODE_STA);
@@ -67,10 +68,11 @@ int cmt2300a_init(cmt2300a_dev_t *dev, int mode)
     /* Reset all IRQ flags */
     (void)cmt2300a_clear_irq_flags(dev);
 
+    if (cmt2300a_is_chip_exist(dev) != CMT2300A_SUCCESS) {
+        return CMT2300A_FAILED;
+    }
 
-    /* RF configuration */
-
-
+    /* SLEEP mode to configuration to take effect */
     if (cmt2300a_go_state(dev, CMT2300A_GO_SLEEP, CTM2300A_STATE_SLEEP) != CMT2300A_SUCCESS) {
         return CMT2300A_FAILED;
     }
@@ -95,6 +97,24 @@ int cmt2300a_soft_reset(cmt2300a_dev_t *dev)
     }
 
     return CMT2300A_SUCCESS;
+}
+
+int cmt2300a_is_chip_exist(cmt2300a_dev_t *dev)
+{
+    uint8_t back = 0;
+    uint8_t data = 0;
+
+    back = read_reg(dev, CMT2300A_CUS_PKT17);
+    write_reg(dev, CMT2300A_CUS_PKT17, 0xAA);
+
+    data = read_reg(dev, CMT2300A_CUS_PKT17);
+    write_reg(dev, CMT2300A_CUS_PKT17, back);
+
+    if (data == 0xAA) {
+        return CMT2300A_SUCCESS;
+    }
+
+    return CMT2300A_FAILED;
 }
 
 int cmt2300a_go_state(cmt2300a_dev_t *dev, int go_state_mask, int desired_chip_status_mask)
