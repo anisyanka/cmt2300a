@@ -83,4 +83,4 @@ def cmt2300a_convert_hex(strSrcFile, strDstFile, strSubfix):
 	
 	output.close()
 	
-cmt2300a_convert_hex('cmt2300a_params.exp', 'cmt2300a_params.h', '')
+cmt2300a_convert_hex('cmt2300a_params.rfpdk', 'cmt2300a_params.h', '')
