@@ -472,29 +472,29 @@
 #define CMT2300A_MASK_GPIO3_SEL          0x30
 #define CMT2300A_MASK_GPIO2_SEL          0x0C
 #define CMT2300A_MASK_GPIO1_SEL          0x03
-/* CMT2300A_MASK_GPIO4_SEL options */
-#define CMT2300A_GPIO4_SEL_RSTIN         0x00
-#define CMT2300A_GPIO4_SEL_INT1          0x40
-#define CMT2300A_GPIO4_SEL_DOUT          0x80
-#define CMT2300A_GPIO4_SEL_DCLK          0xC0
-/* CMT2300A_MASK_GPIO3_SEL options */
-#define CMT2300A_GPIO3_SEL_CLKO          0x00
-#define CMT2300A_GPIO3_SEL_DOUT          0x10
-#define CMT2300A_GPIO3_SEL_DIN           0x10
-#define CMT2300A_GPIO3_SEL_INT2          0x20
-#define CMT2300A_GPIO3_SEL_DCLK          0x30
-/* CMT2300A_MASK_GPIO2_SEL options */
-#define CMT2300A_GPIO2_SEL_INT1          0x00
-#define CMT2300A_GPIO2_SEL_INT2          0x04
-#define CMT2300A_GPIO2_SEL_DOUT          0x08
-#define CMT2300A_GPIO2_SEL_DIN           0x08
-#define CMT2300A_GPIO2_SEL_DCLK          0x0C
-/* CMT2300A_MASK_GPIO1_SEL options */
-#define CMT2300A_GPIO1_SEL_DOUT          0x00
-#define CMT2300A_GPIO1_SEL_DIN           0x00
-#define CMT2300A_GPIO1_SEL_INT1          0x01
-#define CMT2300A_GPIO1_SEL_INT2          0x02
-#define CMT2300A_GPIO1_SEL_DCLK          0x03
+// /* CMT2300A_MASK_GPIO4_SEL options */
+// #define CMT2300A_GPIO4_SEL_RSTIN         0x00
+// #define CMT2300A_GPIO4_SEL_INT1          0x40
+// #define CMT2300A_GPIO4_SEL_DOUT          0x80
+// #define CMT2300A_GPIO4_SEL_DCLK          0xC0
+// /* CMT2300A_MASK_GPIO3_SEL options */
+// #define CMT2300A_GPIO3_SEL_CLKO          0x00
+// #define CMT2300A_GPIO3_SEL_DOUT          0x10
+// #define CMT2300A_GPIO3_SEL_DIN           0x10
+// #define CMT2300A_GPIO3_SEL_INT2          0x20
+// #define CMT2300A_GPIO3_SEL_DCLK          0x30
+// /* CMT2300A_MASK_GPIO2_SEL options */
+// #define CMT2300A_GPIO2_SEL_INT1          0x00
+// #define CMT2300A_GPIO2_SEL_INT2          0x04
+// #define CMT2300A_GPIO2_SEL_DOUT          0x08
+// #define CMT2300A_GPIO2_SEL_DIN           0x08
+// #define CMT2300A_GPIO2_SEL_DCLK          0x0C
+// /* CMT2300A_MASK_GPIO1_SEL options */
+// #define CMT2300A_GPIO1_SEL_DOUT          0x00
+// #define CMT2300A_GPIO1_SEL_DIN           0x00
+// #define CMT2300A_GPIO1_SEL_INT1          0x01
+// #define CMT2300A_GPIO1_SEL_INT2          0x02
+// #define CMT2300A_GPIO1_SEL_DCLK          0x03
 
 /* ********** CMT2300A_CUS_INT1_CTL registers ********** */
 #define CMT2300A_MASK_RF_SWT1_EN         0x80
@@ -505,32 +505,32 @@
 #define CMT2300A_INT_POLAR_SEL_0         0x00
 #define CMT2300A_INT_POLAR_SEL_1         0x20
 /* CMT2300A_MASK_INT1_SEL options */
-#define CMT2300A_INT_SEL_RX_ACTIVE       0x00
-#define CMT2300A_INT_SEL_TX_ACTIVE       0x01
-#define CMT2300A_INT_SEL_RSSI_VLD        0x02
-#define CMT2300A_INT_SEL_PREAM_OK        0x03
-#define CMT2300A_INT_SEL_SYNC_OK         0x04
-#define CMT2300A_INT_SEL_NODE_OK         0x05
-#define CMT2300A_INT_SEL_CRC_OK          0x06
-#define CMT2300A_INT_SEL_PKT_OK          0x07
-#define CMT2300A_INT_SEL_SL_TMO          0x08
-#define CMT2300A_INT_SEL_RX_TMO          0x09
-#define CMT2300A_INT_SEL_TX_DONE         0x0A
-#define CMT2300A_INT_SEL_RX_FIFO_NMTY    0x0B
-#define CMT2300A_INT_SEL_RX_FIFO_TH      0x0C
-#define CMT2300A_INT_SEL_RX_FIFO_FULL    0x0D
-#define CMT2300A_INT_SEL_RX_FIFO_WBYTE   0x0E
-#define CMT2300A_INT_SEL_RX_FIFO_OVF     0x0F
-#define CMT2300A_INT_SEL_TX_FIFO_NMTY    0x10
-#define CMT2300A_INT_SEL_TX_FIFO_TH      0x11
-#define CMT2300A_INT_SEL_TX_FIFO_FULL    0x12
-#define CMT2300A_INT_SEL_STATE_IS_STBY   0x13
-#define CMT2300A_INT_SEL_STATE_IS_FS     0x14
-#define CMT2300A_INT_SEL_STATE_IS_RX     0x15
-#define CMT2300A_INT_SEL_STATE_IS_TX     0x16
-#define CMT2300A_INT_SEL_LED             0x17
-#define CMT2300A_INT_SEL_TRX_ACTIVE      0x18
-#define CMT2300A_INT_SEL_PKT_DONE        0x19
+// #define CMT2300A_INT_SEL_RX_ACTIVE       0x00
+// #define CMT2300A_INT_SEL_TX_ACTIVE       0x01
+// #define CMT2300A_INT_SEL_RSSI_VLD        0x02
+// #define CMT2300A_INT_SEL_PREAM_OK        0x03
+// #define CMT2300A_INT_SEL_SYNC_OK         0x04
+// #define CMT2300A_INT_SEL_NODE_OK         0x05
+// #define CMT2300A_INT_SEL_CRC_OK          0x06
+// #define CMT2300A_INT_SEL_PKT_OK          0x07
+// #define CMT2300A_INT_SEL_SL_TMO          0x08
+// #define CMT2300A_INT_SEL_RX_TMO          0x09
+// #define CMT2300A_INT_SEL_TX_DONE         0x0A
+// #define CMT2300A_INT_SEL_RX_FIFO_NMTY    0x0B
+// #define CMT2300A_INT_SEL_RX_FIFO_TH      0x0C
+// #define CMT2300A_INT_SEL_RX_FIFO_FULL    0x0D
+// #define CMT2300A_INT_SEL_RX_FIFO_WBYTE   0x0E
+// #define CMT2300A_INT_SEL_RX_FIFO_OVF     0x0F
+// #define CMT2300A_INT_SEL_TX_FIFO_NMTY    0x10
+// #define CMT2300A_INT_SEL_TX_FIFO_TH      0x11
+// #define CMT2300A_INT_SEL_TX_FIFO_FULL    0x12
+// #define CMT2300A_INT_SEL_STATE_IS_STBY   0x13
+// #define CMT2300A_INT_SEL_STATE_IS_FS     0x14
+// #define CMT2300A_INT_SEL_STATE_IS_RX     0x15
+// #define CMT2300A_INT_SEL_STATE_IS_TX     0x16
+// #define CMT2300A_INT_SEL_LED             0x17
+// #define CMT2300A_INT_SEL_TRX_ACTIVE      0x18
+// #define CMT2300A_INT_SEL_PKT_DONE        0x19
 
 /* ********** CMT2300A_CUS_INT2_CTL registers ********** */
 #define CMT2300A_MASK_LFOSC_OUT_EN       0x40
@@ -538,14 +538,14 @@
 #define CMT2300A_MASK_INT2_SEL           0x1F
 
 /* ********** CMT2300A_CUS_INT_EN registers ********** */
-#define CMT2300A_MASK_SL_TMO_EN          0x80
-#define CMT2300A_MASK_RX_TMO_EN          0x40
-#define CMT2300A_MASK_TX_DONE_EN         0x20
-#define CMT2300A_MASK_PREAM_OK_EN        0x10
-#define CMT2300A_MASK_SYNC_OK_EN         0x08
-#define CMT2300A_MASK_NODE_OK_EN         0x04
-#define CMT2300A_MASK_CRC_OK_EN          0x02
-#define CMT2300A_MASK_PKT_DONE_EN        0x01
+// #define CMT2300A_MASK_SL_TMO_EN          0x80
+// #define CMT2300A_MASK_RX_TMO_EN          0x40
+// #define CMT2300A_MASK_TX_DONE_EN         0x20
+// #define CMT2300A_MASK_PREAM_OK_EN        0x10
+// #define CMT2300A_MASK_SYNC_OK_EN         0x08
+// #define CMT2300A_MASK_NODE_OK_EN         0x04
+// #define CMT2300A_MASK_CRC_OK_EN          0x02
+// #define CMT2300A_MASK_PKT_DONE_EN        0x01
 
 /* ********** CMT2300A_CUS_FIFO_CTL registers ********** */
 #define CMT2300A_MASK_TX_DIN_EN          0x80

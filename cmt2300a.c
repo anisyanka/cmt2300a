@@ -173,84 +173,158 @@ void cmt2300a_set_lfosc_output(cmt2300a_dev_t *dev, bool enabled)
 
 uint8_t cmt2300a_clear_irq_flags(cmt2300a_dev_t *dev)
 {
-    uint8_t nFlag1 = 0;
-    uint8_t nFlag2 = 0;
-    uint8_t nClr1 = 0;
-    uint8_t nClr2 = 0;
-    uint8_t nRet  = 0;
-    uint8_t nIntPolar = 0;
+    uint8_t flag1 = 0;
+    uint8_t flag2 = 0;
+    uint8_t clr1 = 0;
+    uint8_t clr2 = 0;
+    uint8_t ret  = 0;
+    uint8_t polar = 0;
     
-    nIntPolar = read_reg(dev, CMT2300A_CUS_INT1_CTL);
-    nIntPolar = (nIntPolar & CMT2300A_MASK_INT_POLAR) ? 1 :0;
+    polar = read_reg(dev, CMT2300A_CUS_INT1_CTL);
+    polar = (polar & CMT2300A_MASK_INT_POLAR) ? 1 :0;
 
-    nFlag1 = read_reg(dev, CMT2300A_CUS_INT_FLAG);
-    nFlag2 = read_reg(dev, CMT2300A_CUS_INT_CLR1);
+    flag1 = read_reg(dev, CMT2300A_CUS_INT_FLAG);
+    flag2 = read_reg(dev, CMT2300A_CUS_INT_CLR1);
     
-    if (nIntPolar) { /* Interrupt flag active-low */
-        nFlag1 = ~nFlag1;
-        nFlag2 = ~nFlag2;
+    if (polar) { /* Interrupt flag active-low */
+        flag1 = ~flag1;
+        flag2 = ~flag2;
     }
 
-    if (CMT2300A_MASK_LBD_FLG & nFlag1) {
-        nClr2 |= CMT2300A_MASK_LBD_CLR; /* Clear LBD_FLG */
+    if (CMT2300A_MASK_LBD_FLG & flag1) {
+        clr2 |= CMT2300A_MASK_LBD_CLR; /* Clear LBD_FLG */
     }
 
-    if (CMT2300A_MASK_COL_ERR_FLG & nFlag1) {
-        nClr2 |= CMT2300A_MASK_PKT_DONE_CLR; /* Clear COL_ERR_FLG by PKT_DONE_CLR */
+    if (CMT2300A_MASK_COL_ERR_FLG & flag1) {
+        clr2 |= CMT2300A_MASK_PKT_DONE_CLR; /* Clear COL_ERR_FLG by PKT_DONE_CLR */
     }
 
-    if (CMT2300A_MASK_PKT_ERR_FLG & nFlag1) {
-        nClr2 |= CMT2300A_MASK_PKT_DONE_CLR; /* Clear PKT_ERR_FLG by PKT_DONE_CLR */
+    if (CMT2300A_MASK_PKT_ERR_FLG & flag1) {
+        clr2 |= CMT2300A_MASK_PKT_DONE_CLR; /* Clear PKT_ERR_FLG by PKT_DONE_CLR */
     }
 
-    if (CMT2300A_MASK_PREAM_OK_FLG & nFlag1) {
-        nClr2 |= CMT2300A_MASK_PREAM_OK_CLR; /* Clear PREAM_OK_FLG */
-        nRet  |= CMT2300A_MASK_PREAM_OK_FLG; /* Return PREAM_OK_FLG */
+    if (CMT2300A_MASK_PREAM_OK_FLG & flag1) {
+        clr2 |= CMT2300A_MASK_PREAM_OK_CLR; /* Clear PREAM_OK_FLG */
+        ret  |= CMT2300A_MASK_PREAM_OK_FLG; /* Return PREAM_OK_FLG */
     }
 
-    if (CMT2300A_MASK_SYNC_OK_FLG & nFlag1) {
-        nClr2 |= CMT2300A_MASK_SYNC_OK_CLR; /* Clear SYNC_OK_FLG */
-        nRet  |= CMT2300A_MASK_SYNC_OK_FLG; /* Return SYNC_OK_FLG */
+    if (CMT2300A_MASK_SYNC_OK_FLG & flag1) {
+        clr2 |= CMT2300A_MASK_SYNC_OK_CLR; /* Clear SYNC_OK_FLG */
+        ret  |= CMT2300A_MASK_SYNC_OK_FLG; /* Return SYNC_OK_FLG */
     }
 
-    if (CMT2300A_MASK_NODE_OK_FLG & nFlag1) {
-        nClr2 |= CMT2300A_MASK_NODE_OK_CLR; /* Clear NODE_OK_FLG */
-        nRet  |= CMT2300A_MASK_NODE_OK_FLG; /* Return NODE_OK_FLG */
+    if (CMT2300A_MASK_NODE_OK_FLG & flag1) {
+        clr2 |= CMT2300A_MASK_NODE_OK_CLR; /* Clear NODE_OK_FLG */
+        ret  |= CMT2300A_MASK_NODE_OK_FLG; /* Return NODE_OK_FLG */
     }
 
-    if (CMT2300A_MASK_CRC_OK_FLG & nFlag1) {
-        nClr2 |= CMT2300A_MASK_CRC_OK_CLR; /* Clear CRC_OK_FLG */
-        nRet  |= CMT2300A_MASK_CRC_OK_FLG; /* Return CRC_OK_FLG */
+    if (CMT2300A_MASK_CRC_OK_FLG & flag1) {
+        clr2 |= CMT2300A_MASK_CRC_OK_CLR; /* Clear CRC_OK_FLG */
+        ret  |= CMT2300A_MASK_CRC_OK_FLG; /* Return CRC_OK_FLG */
     }
 
-    if (CMT2300A_MASK_PKT_OK_FLG & nFlag1) {
-        nClr2 |= CMT2300A_MASK_PKT_DONE_CLR; /* Clear PKT_OK_FLG */
-        nRet  |= CMT2300A_MASK_PKT_OK_FLG; /* Return PKT_OK_FLG */
+    if (CMT2300A_MASK_PKT_OK_FLG & flag1) {
+        clr2 |= CMT2300A_MASK_PKT_DONE_CLR; /* Clear PKT_OK_FLG */
+        ret  |= CMT2300A_MASK_PKT_OK_FLG; /* Return PKT_OK_FLG */
     }
 
-    if (CMT2300A_MASK_SL_TMO_FLG & nFlag2) {
-        nClr1 |= CMT2300A_MASK_SL_TMO_CLR; /* Clear SL_TMO_FLG */
-        nRet  |= CMT2300A_MASK_SL_TMO_EN; /* Return SL_TMO_FLG by SL_TMO_EN */
+    if (CMT2300A_MASK_SL_TMO_FLG & flag2) {
+        clr1 |= CMT2300A_MASK_SL_TMO_CLR; /* Clear SL_TMO_FLG */
+        ret  |= CMT2300A_MASK_SL_TMO_EN; /* Return SL_TMO_FLG by SL_TMO_EN */
     }
 
-    if (CMT2300A_MASK_RX_TMO_FLG & nFlag2) {
-        nClr1 |= CMT2300A_MASK_RX_TMO_CLR; /* Clear RX_TMO_FLG */
-        nRet  |= CMT2300A_MASK_RX_TMO_EN; /* Return RX_TMO_FLG by RX_TMO_EN */
+    if (CMT2300A_MASK_RX_TMO_FLG & flag2) {
+        clr1 |= CMT2300A_MASK_RX_TMO_CLR; /* Clear RX_TMO_FLG */
+        ret  |= CMT2300A_MASK_RX_TMO_EN; /* Return RX_TMO_FLG by RX_TMO_EN */
     }
 
-    if (CMT2300A_MASK_TX_DONE_FLG & nFlag2) {
-        nClr1 |= CMT2300A_MASK_TX_DONE_CLR; /* Clear TX_DONE_FLG */
-        nRet  |= CMT2300A_MASK_TX_DONE_EN; /* Return TX_DONE_FLG by TX_DONE_EN */
+    if (CMT2300A_MASK_TX_DONE_FLG & flag2) {
+        clr1 |= CMT2300A_MASK_TX_DONE_CLR; /* Clear TX_DONE_FLG */
+        ret  |= CMT2300A_MASK_TX_DONE_EN; /* Return TX_DONE_FLG by TX_DONE_EN */
     }
     
-    write_reg(dev, CMT2300A_CUS_INT_CLR1, nClr1);
-    write_reg(dev, CMT2300A_CUS_INT_CLR2, nClr2);
+    write_reg(dev, CMT2300A_CUS_INT_CLR1, clr1);
+    write_reg(dev, CMT2300A_CUS_INT_CLR2, clr2);
 
-    if (nIntPolar) { /* Interrupt flag active-low */
-        nRet = ~nRet;
+    if (polar) { /* Interrupt flag active-low */
+        ret = ~ret;
     }
 
-    return nRet;
+    return ret;
+}
+
+int cmt2300a_select_gpio_pins_mode(cmt2300a_dev_t *dev, uint32_t mask)
+{
+    if (cmt2300a_go_state(dev, CMT2300A_GO_STBY, CTM2300A_STATE_STBY) != CMT2300A_SUCCESS) {
+        return CMT2300A_FAILED;
+    }
+
+    write_reg(dev, CMT2300A_CUS_IO_SEL, mask);
+
+    if (cmt2300a_go_state(dev, CMT2300A_GO_SLEEP, CTM2300A_STATE_SLEEP) != CMT2300A_SUCCESS) {
+        return CMT2300A_FAILED;
+    }
+
+    return CMT2300A_SUCCESS;
+}
+
+int cmt2300a_map_gpio_to_irq(cmt2300a_dev_t *dev, uint8_t int1_mapping, uint8_t int2_mapping)
+{
+    if (cmt2300a_go_state(dev, CMT2300A_GO_STBY, CTM2300A_STATE_STBY) != CMT2300A_SUCCESS) {
+        return CMT2300A_FAILED;
+    }
+
+    int1_mapping &= CMT2300A_MASK_INT1_SEL;
+    int1_mapping |= (~CMT2300A_MASK_INT1_SEL) & read_reg(dev, CMT2300A_CUS_INT1_CTL);
+    write_reg(dev, CMT2300A_CUS_INT1_CTL, int1_mapping);
+
+    int2_mapping &= CMT2300A_MASK_INT2_SEL;
+    int2_mapping |= (~CMT2300A_MASK_INT2_SEL) & read_reg(dev, CMT2300A_CUS_INT2_CTL);
+    write_reg(dev, CMT2300A_CUS_INT2_CTL, int2_mapping);
+
+    if (cmt2300a_go_state(dev, CMT2300A_GO_SLEEP, CTM2300A_STATE_SLEEP) != CMT2300A_SUCCESS) {
+        return CMT2300A_FAILED;
+    }
+
+    return CMT2300A_SUCCESS;
+}
+
+int cmt2300a_set_irq_polar(cmt2300a_dev_t *dev, bool level)
+{
+    if (cmt2300a_go_state(dev, CMT2300A_GO_STBY, CTM2300A_STATE_STBY) != CMT2300A_SUCCESS) {
+        return CMT2300A_FAILED;
+    }
+
+    uint8_t tmp = read_reg(dev, CMT2300A_CUS_INT1_CTL);
+
+    if (level) {
+        tmp &= ~CMT2300A_MASK_INT_POLAR;
+    } else {
+        tmp |= CMT2300A_MASK_INT_POLAR;
+    }
+
+    write_reg(dev, CMT2300A_CUS_INT1_CTL, tmp);
+
+    if (cmt2300a_go_state(dev, CMT2300A_GO_SLEEP, CTM2300A_STATE_SLEEP) != CMT2300A_SUCCESS) {
+        return CMT2300A_FAILED;
+    }
+
+    return CMT2300A_SUCCESS;
+}
+
+int cmt2300a_enable_irq(cmt2300a_dev_t *dev, uint8_t mask)
+{
+    if (cmt2300a_go_state(dev, CMT2300A_GO_STBY, CTM2300A_STATE_STBY) != CMT2300A_SUCCESS) {
+        return CMT2300A_FAILED;
+    }
+
+    write_reg(dev, CMT2300A_CUS_INT_EN, mask);
+
+    if (cmt2300a_go_state(dev, CMT2300A_GO_SLEEP, CTM2300A_STATE_SLEEP) != CMT2300A_SUCCESS) {
+        return CMT2300A_FAILED;
+    }
+
+    return CMT2300A_SUCCESS;
 }
 
 static void if_send_byte(cmt2300a_dev_t *dev, uint8_t data8)
