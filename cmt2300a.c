@@ -71,7 +71,7 @@ int cmt2300a_init(cmt2300a_dev_t *dev, int mode)
     /* RF configuration */
 
 
-    if (cmt2300a_go_state(dev, CMT2300A_GO_SLEEP, CTM2300A_STATE_STBY) != CMT2300A_SUCCESS) {
+    if (cmt2300a_go_state(dev, CMT2300A_GO_SLEEP, CTM2300A_STATE_SLEEP) != CMT2300A_SUCCESS) {
         return CMT2300A_FAILED;
     }
 
