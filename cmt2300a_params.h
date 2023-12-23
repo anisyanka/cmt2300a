@@ -39,12 +39,12 @@ const uint8_t g_cmt2300aSystemBank[CMT2300A_SYSTEM_BANK_SIZE] = {
 /* [Frequency Bank] */
 const uint8_t g_cmt2300aFrequencyBank[CMT2300A_FREQUENCY_BANK_SIZE] = {
     0x42,
-    0x71,
-    0xCE,
-    0x1C,
+    0x1E,
+    0x30,
+    0x1D,
     0x42,
-    0x5B,
-    0x1C,
+    0x07,
+    0x7E,
     0x1C,
 };
 
