@@ -93,7 +93,7 @@ const uint8_t g_cmt2300aBasebandBank[CMT2300A_BASEBAND_BANK_SIZE] = {
     0xF1,
     0x01,
     0x1F,
-    0x1D,
+    0x0D,
     0x00,
     0x00,
     0x00,
