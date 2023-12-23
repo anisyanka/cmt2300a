@@ -179,13 +179,13 @@ uint8_t cmt2300a_clear_irq_flags(cmt2300a_dev_t *dev)
     uint8_t clr2 = 0;
     uint8_t ret  = 0;
     uint8_t polar = 0;
-    
+
     polar = read_reg(dev, CMT2300A_CUS_INT1_CTL);
     polar = (polar & CMT2300A_MASK_INT_POLAR) ? 1 :0;
 
     flag1 = read_reg(dev, CMT2300A_CUS_INT_FLAG);
     flag2 = read_reg(dev, CMT2300A_CUS_INT_CLR1);
-    
+
     if (polar) { /* Interrupt flag active-low */
         flag1 = ~flag1;
         flag2 = ~flag2;
@@ -242,7 +242,7 @@ uint8_t cmt2300a_clear_irq_flags(cmt2300a_dev_t *dev)
         clr1 |= CMT2300A_MASK_TX_DONE_CLR; /* Clear TX_DONE_FLG */
         ret  |= CMT2300A_MASK_TX_DONE_EN; /* Return TX_DONE_FLG by TX_DONE_EN */
     }
-    
+
     write_reg(dev, CMT2300A_CUS_INT_CLR1, clr1);
     write_reg(dev, CMT2300A_CUS_INT_CLR2, clr2);
 
@@ -327,6 +327,49 @@ int cmt2300a_enable_irq(cmt2300a_dev_t *dev, uint8_t mask)
     return CMT2300A_SUCCESS;
 }
 
+int cmt2300a_set_merge_fifo(cmt2300a_dev_t *dev, bool is_merged)
+{
+    if (cmt2300a_go_state(dev, CMT2300A_GO_STBY, CTM2300A_STATE_STBY) != CMT2300A_SUCCESS) {
+        return CMT2300A_FAILED;
+    }
+
+    uint8_t tmp = read_reg(dev, CMT2300A_CUS_FIFO_CTL);
+
+    if (is_merged) {
+        tmp |= CMT2300A_MASK_FIFO_MERGE_EN;
+    } else {
+        tmp &= ~CMT2300A_MASK_FIFO_MERGE_EN;
+    }
+
+    write_reg(dev, CMT2300A_CUS_FIFO_CTL, tmp);
+
+    if (cmt2300a_go_state(dev, CMT2300A_GO_SLEEP, CTM2300A_STATE_SLEEP) != CMT2300A_SUCCESS) {
+        return CMT2300A_FAILED;
+    }
+
+    return CMT2300A_SUCCESS;
+}
+
+int cmt2300a_set_fifo_threshold(cmt2300a_dev_t *dev, uint32_t threshold)
+{
+    if (cmt2300a_go_state(dev, CMT2300A_GO_STBY, CTM2300A_STATE_STBY) != CMT2300A_SUCCESS) {
+        return CMT2300A_FAILED;
+    }
+
+    uint8_t tmp = read_reg(dev, CMT2300A_CUS_PKT29);
+
+    tmp &= ~CMT2300A_MASK_FIFO_TH;
+    tmp |= threshold & CMT2300A_MASK_FIFO_TH;
+
+    write_reg(dev, CMT2300A_CUS_PKT29, tmp);
+
+    if (cmt2300a_go_state(dev, CMT2300A_GO_SLEEP, CTM2300A_STATE_SLEEP) != CMT2300A_SUCCESS) {
+        return CMT2300A_FAILED;
+    }
+
+    return CMT2300A_SUCCESS;
+}
+
 static void if_send_byte(cmt2300a_dev_t *dev, uint8_t data8)
 {
     for (int i = 0; i < 8; ++i) {
@@ -394,7 +437,7 @@ static uint8_t read_reg(cmt2300a_dev_t *dev, uint8_t reg)
     uint8_t value = 0;
 
     dev->cmt2300a_ll->dio_pin_set();
-    dev->cmt2300a_ll->sclk_pin_reset(); 
+    dev->cmt2300a_ll->sclk_pin_reset();
     dev->cmt2300a_ll->fcsb_pin_set();
     dev->cmt2300a_ll->csb_pin_reset();
     dev->cmt2300a_ll->delay_us(2 * IF_DELAY_US); /* > 0.5 SCL cycle */

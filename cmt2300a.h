@@ -291,6 +291,13 @@ int cmt2300a_set_irq_polar(cmt2300a_dev_t *dev, bool level);
  */
 int cmt2300a_enable_irq(cmt2300a_dev_t *dev, uint8_t mask);
 
+/*
+ * 'is_merged' true: use a single 64-byte FIFO for either Tx or Rx
+ *             false: use a 32-byte FIFO for Tx and another 32-byte FIFO for Rx(default)
+ */
+int cmt2300a_set_merge_fifo(cmt2300a_dev_t *dev, bool is_merged);
+int cmt2300a_set_fifo_threshold(cmt2300a_dev_t *dev, uint32_t threshold);
+
 #ifdef __cplusplus
 }
 #endif
