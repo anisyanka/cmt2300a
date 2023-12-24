@@ -7,6 +7,7 @@ extern "C" {
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <stddef.h>
 
 typedef enum {
     CMT2300_433FREQ_MODE,
@@ -114,6 +115,7 @@ typedef enum {
 /* Low level functions for radio chip pins managing */
 typedef struct {
     void (*delay_us)(uint32_t us);
+    uint32_t (*get_tick_ms)(void);
 
     /* chip select pin */
     void (*csb_pin_set)(void);
@@ -135,6 +137,15 @@ typedef struct {
 
 /* Device sample */
 typedef struct {
+    int tx_done_flag;
+    int rx_packet_received_flag;
+    int is_fifo_merged;
+    int tx_fifo_size;
+    int rx_fifo_size;
+    int tx_rx_state;
+    uint32_t desired_tick;
+    uint8_t *rx_buf;
+    size_t rx_buf_len;
     cmt2300a_ll_t *cmt2300a_ll;
 } cmt2300a_dev_t;
 
@@ -297,6 +308,57 @@ int cmt2300a_enable_irq(cmt2300a_dev_t *dev, uint8_t mask);
  */
 int cmt2300a_set_merge_fifo(cmt2300a_dev_t *dev, bool is_merged);
 int cmt2300a_set_fifo_threshold(cmt2300a_dev_t *dev, uint32_t threshold);
+
+typedef enum {
+    RF_STATE_IDLE = 0, /* Initial state after cmt2300a_init() */
+    RF_STATE_RX_WAIT, /* Receiving started but not finished */
+    RF_STATE_RX_DONE, /* Packet received and check crc-ok flag is OK. Remember you have to use GPIO PKT_OK interrupt and call cmt2300a_rx_packet_isr() in your ISR */
+    RF_STATE_TX_WAIT, /* Transmitting started but not finished */
+    RF_STATE_TX_DONE, /* Transmitting fully done with no errors. Remember you have to use GPIO TX_DONE interrupt and call cmt2300a_tx_done_isr() in your ISR */
+    RF_STATE_TIMEOUT, /* Transmitting or receiving timve exceeded timeout passed to cmt2300a_transmit_packet() or cmt2300a_receive_packet() functions  */
+    RF_STATE_CRC_ERROR, /* Packet received, but crc calculated by the chip is failed */
+    RF_STATE_ERROR, /* Something bad happend. For instance chip didn't change your state from STDBY to TX or RX. Probably something happend in you SCK\DIO lines. Use cmt2300a_soft_reset() after that event */
+} cmt2300a_tx_rx_states_t;
+
+/*
+ * Main radio handler.
+ * Must be called in thread or loop.
+ * 
+ * Returns one of 'cmt2300a_tx_rx_states_t' value.
+ * 
+ */
+int cmt2300a_process(cmt2300a_dev_t *dev);
+
+void cmt2300a_tx_done_isr(cmt2300a_dev_t *dev); /* must be called in gpio TX_DONE isr */
+void cmt2300a_rx_packet_isr(cmt2300a_dev_t *dev); /* must be called in gpio PKT_OK isr */
+
+/*
+ * User function to send and receive some data.
+ *
+ * param 'data_to_tx_len' and 'place_to_rx' must not be more, than fifo size.
+ *  Max is 32 or 64 in case of merged fifo.
+ *
+ * param 'timeout_ms' means if the packet will not transmited or received within this time
+ * the cmt2300a_process() will return RF_STATE_TIMEOUT.
+ * 
+ * DON'T USE 'data_to_tx' or 'place_to_rx' buffers until your get:
+ *  - RF_STATE_TX_DONE from cmt2300a_process() in case of transmitting;
+ *  - RF_STATE_RX_DONE from cmt2300a_process in case of receiving;
+ * 
+ * Returns CMT2300A_SUCCESS in case of successfully started to transmit ot receive user data.
+ * It means that cmt2300a_process() will handle RF_STATE_TX_WAIT or RF_STATE_RX_WAIT states.
+ */
+int cmt2300a_transmit_packet(cmt2300a_dev_t *dev, uint8_t *data_to_tx, size_t data_to_tx_len, uint32_t timeout_ms);
+int cmt2300a_receive_packet(cmt2300a_dev_t *dev, uint8_t *place_to_rx, size_t place_to_rx_len, uint32_t timeout_ms);
+void cmt2300a_abort_any_operations(cmt2300a_dev_t *dev);
+
+int cmt2300a_set_node_id(cmt2300a_dev_t *dev, uint32_t node_id);
+
+/*
+ * is_allowed = false - obtain packets only with our node_id
+ * is_allowed = true - obtain any node_id
+ */
+int cmt2300a_allow_receiving_any_nodeid(cmt2300a_dev_t *dev, bool is_allowed);
 
 #ifdef __cplusplus
 }
