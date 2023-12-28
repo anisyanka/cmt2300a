@@ -83,7 +83,7 @@ int cmt2300a_init(cmt2300a_dev_t *dev, int mode)
     write_reg(dev, CMT2300A_CUS_MODE_STA, tmp);
 
     /* Reset all IRQ flags */
-    (void)cmt2300a_clear_irq_flags(dev);
+    (void)cmt2300a_clear_irq_flags(dev, NULL);
 
     if (cmt2300a_is_chip_exist(dev) != CMT2300A_SUCCESS) {
         return CMT2300A_FAILED;
@@ -188,7 +188,7 @@ void cmt2300a_set_lfosc_output(cmt2300a_dev_t *dev, bool enabled)
     write_reg(dev, CMT2300A_CUS_INT2_CTL, tmp);
 }
 
-uint8_t cmt2300a_clear_irq_flags(cmt2300a_dev_t *dev)
+uint8_t cmt2300a_clear_irq_flags(cmt2300a_dev_t *dev, int *is_col_detected)
 {
     uint8_t flag1 = 0;
     uint8_t flag2 = 0;
@@ -214,6 +214,9 @@ uint8_t cmt2300a_clear_irq_flags(cmt2300a_dev_t *dev)
 
     if (CMT2300A_MASK_COL_ERR_FLG & flag1) {
         clr2 |= CMT2300A_MASK_PKT_DONE_CLR; /* Clear COL_ERR_FLG by PKT_DONE_CLR */
+        if (is_col_detected) {
+            *is_col_detected = 1;
+        }
     }
 
     if (CMT2300A_MASK_PKT_ERR_FLG & flag1) {
@@ -415,11 +418,18 @@ int cmt2300a_process(cmt2300a_dev_t *dev)
 
     case RF_STATE_TX_DONE:
     {
+        int is_col_detected = 0;
         dev->tx_rx_state = RF_STATE_IDLE;
-        cmt2300a_clear_irq_flags(dev);
+        cmt2300a_clear_irq_flags(dev, &is_col_detected);
+
         if (cmt2300a_go_state(dev, CMT2300A_GO_SLEEP, CTM2300A_STATE_SLEEP) != CMT2300A_SUCCESS) {
             dev->tx_rx_state = RF_STATE_ERROR;
         }
+
+        if (is_col_detected) {
+            return RF_STATE_ERROR;
+        }
+
         return RF_STATE_TX_DONE;
     }
 
@@ -442,18 +452,29 @@ int cmt2300a_process(cmt2300a_dev_t *dev)
 
     case RF_STATE_RX_DONE:
     {
+        int is_col_detected = 0;
+        int8_t irq_flags = 0;
+
         dev->tx_rx_state = RF_STATE_IDLE;
         if (cmt2300a_go_state(dev, CMT2300A_GO_STBY, CTM2300A_STATE_STBY) != CMT2300A_SUCCESS) {
             dev->tx_rx_state = RF_STATE_ERROR;
         }
-        read_fifo(dev, dev->rx_buf, dev->rx_buf_len);
-        cmt2300a_clear_irq_flags(dev);
 
-        // check error in the flags (crc and pack collision)
+        read_fifo(dev, dev->rx_buf, dev->rx_buf_len);
+        irq_flags = cmt2300a_clear_irq_flags(dev, &is_col_detected);
 
         if (cmt2300a_go_state(dev, CMT2300A_GO_SLEEP, CTM2300A_STATE_SLEEP) != CMT2300A_SUCCESS) {
             dev->tx_rx_state = RF_STATE_ERROR;
         }
+
+        if (is_col_detected) {
+            return RF_STATE_ERROR;
+        }
+
+        if ((irq_flags & CMT2300A_MASK_CRC_OK_FLG) == 0) {
+            return RF_STATE_CRC_ERROR;
+        }
+
         return RF_STATE_RX_DONE;
     }
 
@@ -484,7 +505,7 @@ int cmt2300a_transmit_packet(cmt2300a_dev_t *dev, uint8_t *data_to_tx, size_t da
         return CMT2300A_FAILED;
     }
 
-    (void)cmt2300a_clear_irq_flags(dev);
+    (void)cmt2300a_clear_irq_flags(dev, NULL);
 
     /* Transmitting approach is:
      *  - Fill in len register (CMT2300A_CUS_PKT15)
@@ -525,7 +546,7 @@ int cmt2300a_receive_packet(cmt2300a_dev_t *dev, uint8_t *place_to_rx, size_t pl
         return CMT2300A_FAILED;
     }
 
-    (void)cmt2300a_clear_irq_flags(dev);
+    (void)cmt2300a_clear_irq_flags(dev, NULL);
 
     /* Must clear FIFO after enable SPI to read or write the FIFO */
     fifo_read_enable(dev);

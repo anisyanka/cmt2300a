@@ -190,7 +190,7 @@ void cmt2300a_set_lfosc(cmt2300a_dev_t *dev, bool enabled); /* Low frequency osc
 void cmt2300a_set_lfosc_output(cmt2300a_dev_t *dev, bool enabled); /* LFOSC output via GPIO3 */
 
 /* Clears all rised IRQ inside chip and returns IRQ masks have been rised */
-uint8_t cmt2300a_clear_irq_flags(cmt2300a_dev_t *dev);
+uint8_t cmt2300a_clear_irq_flags(cmt2300a_dev_t *dev, int *is_col_detected);
 
 /* 
  * The function defines what pin what have to do.
