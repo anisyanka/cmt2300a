@@ -486,6 +486,15 @@ int cmt2300a_transmit_packet(cmt2300a_dev_t *dev, uint8_t *data_to_tx, size_t da
 
     (void)cmt2300a_clear_irq_flags(dev);
 
+    /* Transmitting approach is:
+     *  - Fill in len register (CMT2300A_CUS_PKT15)
+     *  - Fill in tx fifo
+     *  - Transmit data
+     * 
+     * Therefore only length not more than 'tx_fifo_size' is supported for now.
+     */
+    write_reg(dev, CMT2300A_CUS_PKT15, data_to_tx_len);
+
     /* Must clear FIFO after enable SPI to read or write the FIFO */
     fifo_write_enable(dev);
     (void)fifo_clear_tx(dev);
