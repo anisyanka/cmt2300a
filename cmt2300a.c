@@ -404,12 +404,18 @@ int cmt2300a_process(cmt2300a_dev_t *dev)
     {
         if (dev->tx_done_flag) {
             dev->tx_done_flag = 0;
-            dev->tx_rx_state = RF_STATE_TX_DONE;
+            dev->tx_rx_state = RF_STATE_IDLE;
+
+            cmt2300a_clear_irq_flags(dev, NULL);
+            if (cmt2300a_go_state(dev, CMT2300A_GO_SLEEP, CTM2300A_STATE_SLEEP) != CMT2300A_SUCCESS) {
+                return RF_STATE_ERROR;
+            }
+            return RF_STATE_TX_DONE;
         } else {
             if (dev->cmt2300a_ll->get_tick_ms() > dev->tx_desired_tick) {
                 dev->tx_rx_state = RF_STATE_IDLE;
                 if (cmt2300a_go_state(dev, CMT2300A_GO_SLEEP, CTM2300A_STATE_SLEEP) != CMT2300A_SUCCESS) {
-                    dev->tx_rx_state = RF_STATE_ERROR;
+                    return RF_STATE_ERROR;
                 }
                 return RF_STATE_TIMEOUT;
             }
@@ -417,56 +423,39 @@ int cmt2300a_process(cmt2300a_dev_t *dev)
         return RF_STATE_TX_WAIT;
     }
 
-    case RF_STATE_TX_DONE:
-    {
-        dev->tx_rx_state = RF_STATE_IDLE;
-        cmt2300a_clear_irq_flags(dev, NULL);
-
-        if (cmt2300a_go_state(dev, CMT2300A_GO_SLEEP, CTM2300A_STATE_SLEEP) != CMT2300A_SUCCESS) {
-            dev->tx_rx_state = RF_STATE_ERROR;
-        }
-
-        return RF_STATE_TX_DONE;
-    }
-
     case RF_STATE_RX_WAIT:
     {
         if (dev->rx_packet_received_flag) {
             dev->rx_packet_received_flag = 0;
-            dev->tx_rx_state = RF_STATE_RX_DONE;
+            dev->tx_rx_state = RF_STATE_IDLE;
+
+            if (cmt2300a_go_state(dev, CMT2300A_GO_STBY, CTM2300A_STATE_STBY) != CMT2300A_SUCCESS) {
+                dev->tx_rx_state = RF_STATE_ERROR;
+            }
+
+            read_fifo(dev, dev->rx_buf, dev->rx_buf_len);
+
+            (void)cmt2300a_clear_irq_flags(dev, NULL);
+            if (cmt2300a_go_state(dev, CMT2300A_GO_SLEEP, CTM2300A_STATE_SLEEP) != CMT2300A_SUCCESS) {
+                dev->tx_rx_state = RF_STATE_ERROR;
+            }
+
+            if (dev->tx_rx_state == RF_STATE_ERROR) {
+                dev->tx_rx_state = RF_STATE_IDLE;
+                return RF_STATE_ERROR;
+            }
+
+            return RF_STATE_RX_DONE;
         } else {
             if (dev->cmt2300a_ll->get_tick_ms() > dev->rx_desired_tick) {
                 dev->tx_rx_state = RF_STATE_IDLE;
                 if (cmt2300a_go_state(dev, CMT2300A_GO_SLEEP, CTM2300A_STATE_SLEEP) != CMT2300A_SUCCESS) {
-                    dev->tx_rx_state = RF_STATE_ERROR;
+                    return RF_STATE_ERROR;
                 }
                 return RF_STATE_TIMEOUT;
             }
         }
         return RF_STATE_RX_WAIT;
-    }
-
-    case RF_STATE_RX_DONE:
-    {
-        dev->tx_rx_state = RF_STATE_IDLE;
-        if (cmt2300a_go_state(dev, CMT2300A_GO_STBY, CTM2300A_STATE_STBY) != CMT2300A_SUCCESS) {
-            dev->tx_rx_state = RF_STATE_ERROR;
-        }
-
-        read_fifo(dev, dev->rx_buf, dev->rx_buf_len);
-        (void)cmt2300a_clear_irq_flags(dev, NULL);
-
-        if (cmt2300a_go_state(dev, CMT2300A_GO_SLEEP, CTM2300A_STATE_SLEEP) != CMT2300A_SUCCESS) {
-            dev->tx_rx_state = RF_STATE_ERROR;
-        }
-
-        return RF_STATE_RX_DONE;
-    }
-
-    case RF_STATE_ERROR:
-    {
-        dev->tx_rx_state = RF_STATE_IDLE;
-        return RF_STATE_ERROR;
     }
 
     case RF_STATE_IDLE:

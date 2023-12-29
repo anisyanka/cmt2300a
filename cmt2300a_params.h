@@ -31,7 +31,7 @@ const uint8_t g_cmt2300aSystemBank[CMT2300A_SYSTEM_BANK_SIZE] = {
     0x10,
     0xE2,
     0x42,
-    0xA0,
+    0xE0,
     0x11,
     0x81,
 };
@@ -39,12 +39,12 @@ const uint8_t g_cmt2300aSystemBank[CMT2300A_SYSTEM_BANK_SIZE] = {
 /* [Frequency Bank] */
 const uint8_t g_cmt2300aFrequencyBank[CMT2300A_FREQUENCY_BANK_SIZE] = {
     0x42,
-    0x1E,
-    0x30,
+    0xDB,
+    0x00,
     0x1D,
     0x42,
-    0x07,
-    0x7E,
+    0xC4,
+    0x4E,
     0x1C,
 };
 
@@ -54,9 +54,9 @@ const uint8_t g_cmt2300aDataRateBank[CMT2300A_DATA_RATE_BANK_SIZE] = {
     0xF0,
     0x23,
     0x10,
-    0x53,
+    0x63,
     0x12,
-    0x01,
+    0x09,
     0x0A,
     0x9F,
     0x6C,
@@ -112,8 +112,8 @@ const uint8_t g_cmt2300aBasebandBank[CMT2300A_BASEBAND_BANK_SIZE] = {
 /* [Tx Bank] */
 const uint8_t g_cmt2300aTxBank[CMT2300A_TX_BANK_SIZE] = {
     0x50,
-    0x26,
-    0x03,
+    0xE7,
+    0x12,
     0x00,
     0x00,
     0x30,
