@@ -43,7 +43,8 @@ int cmt2300a_init(cmt2300a_dev_t *dev, int mode)
     dev->rx_fifo_size = 32;
     dev->tx_fifo_size = 32;
     dev->tx_rx_state = RF_STATE_IDLE;
-    dev->desired_tick = 0;
+    dev->tx_desired_tick = 0;
+    dev->rx_desired_tick = 0;
     dev->rx_buf = NULL;
     dev->rx_buf_len = 0;
 
@@ -405,7 +406,7 @@ int cmt2300a_process(cmt2300a_dev_t *dev)
             dev->tx_done_flag = 0;
             dev->tx_rx_state = RF_STATE_TX_DONE;
         } else {
-            if (dev->cmt2300a_ll->get_tick_ms() > dev->desired_tick) {
+            if (dev->cmt2300a_ll->get_tick_ms() > dev->tx_desired_tick) {
                 dev->tx_rx_state = RF_STATE_IDLE;
                 if (cmt2300a_go_state(dev, CMT2300A_GO_SLEEP, CTM2300A_STATE_SLEEP) != CMT2300A_SUCCESS) {
                     dev->tx_rx_state = RF_STATE_ERROR;
@@ -434,7 +435,7 @@ int cmt2300a_process(cmt2300a_dev_t *dev)
             dev->rx_packet_received_flag = 0;
             dev->tx_rx_state = RF_STATE_RX_DONE;
         } else {
-            if (dev->cmt2300a_ll->get_tick_ms() > dev->desired_tick) {
+            if (dev->cmt2300a_ll->get_tick_ms() > dev->rx_desired_tick) {
                 dev->tx_rx_state = RF_STATE_IDLE;
                 if (cmt2300a_go_state(dev, CMT2300A_GO_SLEEP, CTM2300A_STATE_SLEEP) != CMT2300A_SUCCESS) {
                     dev->tx_rx_state = RF_STATE_ERROR;
@@ -512,7 +513,7 @@ int cmt2300a_transmit_packet(cmt2300a_dev_t *dev, uint8_t *data_to_tx, size_t da
         return CMT2300A_FAILED;
     }
 
-    dev->desired_tick = dev->cmt2300a_ll->get_tick_ms() + timeout_ms;
+    dev->tx_desired_tick = dev->cmt2300a_ll->get_tick_ms() + timeout_ms;
     dev->tx_rx_state = RF_STATE_TX_WAIT;
 
     return CMT2300A_SUCCESS;
@@ -545,7 +546,7 @@ int cmt2300a_receive_packet(cmt2300a_dev_t *dev, uint8_t *place_to_rx, size_t pl
         return CMT2300A_FAILED;
     }
 
-    dev->desired_tick = dev->cmt2300a_ll->get_tick_ms() + timeout_ms;
+    dev->rx_desired_tick = dev->cmt2300a_ll->get_tick_ms() + timeout_ms;
     dev->tx_rx_state = RF_STATE_RX_WAIT;
 
     return CMT2300A_SUCCESS;

@@ -143,7 +143,8 @@ typedef struct {
     int tx_fifo_size;
     int rx_fifo_size;
     int tx_rx_state;
-    uint32_t desired_tick;
+    uint32_t tx_desired_tick;
+    uint32_t rx_desired_tick;
     uint8_t *rx_buf;
     size_t rx_buf_len;
     cmt2300a_ll_t *cmt2300a_ll;
