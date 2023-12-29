@@ -418,16 +418,11 @@ int cmt2300a_process(cmt2300a_dev_t *dev)
 
     case RF_STATE_TX_DONE:
     {
-        int is_col_detected = 0;
         dev->tx_rx_state = RF_STATE_IDLE;
-        cmt2300a_clear_irq_flags(dev, &is_col_detected);
+        cmt2300a_clear_irq_flags(dev, NULL);
 
         if (cmt2300a_go_state(dev, CMT2300A_GO_SLEEP, CTM2300A_STATE_SLEEP) != CMT2300A_SUCCESS) {
             dev->tx_rx_state = RF_STATE_ERROR;
-        }
-
-        if (is_col_detected) {
-            return RF_STATE_ERROR;
         }
 
         return RF_STATE_TX_DONE;
@@ -452,27 +447,16 @@ int cmt2300a_process(cmt2300a_dev_t *dev)
 
     case RF_STATE_RX_DONE:
     {
-        int is_col_detected = 0;
-        int8_t irq_flags = 0;
-
         dev->tx_rx_state = RF_STATE_IDLE;
         if (cmt2300a_go_state(dev, CMT2300A_GO_STBY, CTM2300A_STATE_STBY) != CMT2300A_SUCCESS) {
             dev->tx_rx_state = RF_STATE_ERROR;
         }
 
         read_fifo(dev, dev->rx_buf, dev->rx_buf_len);
-        irq_flags = cmt2300a_clear_irq_flags(dev, &is_col_detected);
+        (void)cmt2300a_clear_irq_flags(dev, NULL);
 
         if (cmt2300a_go_state(dev, CMT2300A_GO_SLEEP, CTM2300A_STATE_SLEEP) != CMT2300A_SUCCESS) {
             dev->tx_rx_state = RF_STATE_ERROR;
-        }
-
-        if (is_col_detected) {
-            return RF_STATE_ERROR;
-        }
-
-        if ((irq_flags & CMT2300A_MASK_CRC_OK_FLG) == 0) {
-            return RF_STATE_CRC_ERROR;
         }
 
         return RF_STATE_RX_DONE;
