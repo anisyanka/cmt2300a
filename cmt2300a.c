@@ -543,8 +543,8 @@ int cmt2300a_receive_packet(cmt2300a_dev_t *dev, uint8_t *place_to_rx, size_t pl
 
 void cmt2300a_abort_any_operations(cmt2300a_dev_t *dev)
 {
-    if (cmt2300a_soft_reset(dev) != CMT2300A_SUCCESS) {
-        cmt2300a_soft_reset(dev); /* just try again one time */
+    if (cmt2300a_go_state(dev, CMT2300A_GO_STBY, CTM2300A_STATE_STBY) != CMT2300A_SUCCESS) {
+        cmt2300a_go_state(dev, CMT2300A_GO_STBY, CTM2300A_STATE_STBY); /* just try one more time */
     }
 
     dev->cmt2300a_ll->delay_us(20);
