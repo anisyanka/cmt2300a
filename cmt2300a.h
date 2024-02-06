@@ -11,7 +11,7 @@ extern "C" {
 
 typedef enum {
     CMT2300_433FREQ_MODE,
-    CMT2300_868FREQ_MODE,
+    CMT2300_868FREQ_MODE, /* Unsupported for now */
 } cmt2300_modes_t;
 
 typedef enum {
